@@ -44,7 +44,7 @@ term ::=
   # term                -- box intr
   dup var = term; term  -- box elim
   ${name} term          -- self type
-  $intr{term} term      -- self intr
+  $intr{x : term} term  -- self intr
   $elim{term}           -- self elim
   Type                  -- type
   name                  -- variable
@@ -114,7 +114,13 @@ ctx, x : ${x}A |- A : Type
 -------------------------- self type
 ctx |- ${x}A : Type
 
-ctx, 
+ctx |- t : A[x <- t]
+-------------------------- self intr
+ctx |- $intr{x:A}t : ${x}A
+
+ctx |- t : ${x}A
+--------------------------- self elim
+ctx |- $elim{t} : A[x <- t]
 
 x : A in defs
 ------------- definition
@@ -171,7 +177,7 @@ In other words:
 - Types are stratified.
 
 - A lambda is stratified when its body is, and its variable is only
-  used once at level 0.
+  used at most once at level 0.
 
 - A duplication is stratified when its expression is, its body is, and
   its variable is only used at level 1.
@@ -312,9 +318,20 @@ induction
   λP. λs. λz. λn.
   dup succ = s;
   dup zero = z;
-  (((n P) succ) zero)
+  (((n P) #succ) #zero)
 ```
 
 Scott-Encoded datatypes can be used to emulate Haskell and Agda-like datatypes,
 while Church-Encoded datatypes like the one above can be used to emulate loops
 and bounded recursion.
+
+More info
+---------
+
+This, again, is a rushed draft I made on request. Sadly, we don't have all that
+info in a more organized and presentable format right now, and it is not our
+near-term priority. Once we have Formality in a more mature state, we will be
+delighted to formalize all that stuff in our own language. For now, I hope this
+is enough info to at least give an idea of what EA-TT is about. I also wrote
+some things about it in an (also outdated) post
+[here](https://medium.com/@maiavictor/introduction-to-formality-part-1-7ae5b02422ec).
