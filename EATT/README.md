@@ -33,7 +33,7 @@ name ::=
   (alphanumeric)
 
 defs ::=
-  | name : term = term; term -- top-level definition
+  | name : term = term; defs -- top-level definition
   | <eof>                    -- end of file
 
 term ::=
@@ -155,7 +155,7 @@ ctx |- A : Type
 ---------------
 stratified(A)
 
-stratified(f)    uses(x,f) <= 1    level(x,f) == 0
+stratified(f)    uses(x,f) <= 1    level(x,b) == 0
 --------------------------------------------------
 stratified(λx.f) 
 
