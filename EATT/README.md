@@ -33,7 +33,7 @@ name ::=
   (alphanumeric)
 
 defs ::=
-  | name : term = term; term -- top-level definition
+  | name : term = term; defs -- top-level definition
   | <eof>                    -- end of file
 
 term ::=
@@ -155,7 +155,7 @@ ctx |- A : Type
 ---------------
 stratified(A)
 
-stratified(f)    uses(x,f) <= 1    level(x,f) == 0
+stratified(f)    uses(x,f) <= 1    level(x,b) == 0
 --------------------------------------------------
 stratified(λx.f) 
 
@@ -201,7 +201,7 @@ Let `profile(t, n)` be the number of applications and duplications at level `n`
 of a term `t`. For example, the following term:
 
 ```
-λt. ((t #λx.x) #(λy.y λz.z))
+t := λf. ((f #λx.x) #(λy.y λz.z))
 ```
 
 Has the following profile:
@@ -216,7 +216,7 @@ Because there are 2 applications on level 0 and 1 application on level 1.
 The following term:
 
 ```
-λf.
+t := λf.
   dup a = (λk.k #f)
   dup b = #λx. (a (a x))
   # λx. (b (b x))
@@ -232,8 +232,8 @@ profile(t, 1) == 4
 Because there are 1 application and 2 duplications on level 0 and 4 applications
 on level 1.
 
-The key fact to note is that evaluating a redex on level `n` of a term `t`
-always decreases `profile(t, n)` by at least 1, and leaves `profile(t, m)`
+The key fact to note is that evaluating a redex on level `n` of a stratified term 
+`t` always decreases `profile(t, n)` by at least 1, and leaves `profile(t, m)`
 untouched for any `m < n`. Let's consider the relevant reductions.
 
 An application on level `n`:
@@ -244,7 +244,7 @@ An application on level `n`:
 
 Evaluates to `f[x <- a]`. Since `x` can only occur at most once (because lambdas
 are affine), then no new applications or duplications can be created by that
-evaluation. Moreover, since the number of boxes surrounding 
+evaluation.  
 
 Since the number of boxes surrounding the occurrence of `x` in `f` must be `0`,
 then `a` will stay on level `n` after reduction.  Moreover, since `x` only
